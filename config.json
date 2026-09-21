@@ -56,6 +56,29 @@
     "ratio": 1.6
   },
   "custom_models": {
+    "codex-auto-review": {
+      "_comment": "sub2api audited snapshot: gpt-5.6-luna base rates, but do NOT infer public GPT-5.6 service-tier (priority), cache-write, or long-context pricing for this internal Codex model. The nulls cancel the fields the codex-auto-review alias (above) copies in from gpt-5.6-luna. Billing note: the priority nulls are outcome-neutral because sub2api charges the generic 2x for a priority/fast tier when no priority price is set; the long-context ladder nulls are NOT neutral and must stay off.",
+      "cache_creation_input_token_cost": null,
+      "cache_creation_input_token_cost_priority": null,
+      "cache_read_input_token_cost_priority": null,
+      "input_cost_per_token_priority": null,
+      "output_cost_per_token_priority": null,
+      "input_cost_per_token_above_272k_tokens": null,
+      "output_cost_per_token_above_272k_tokens": null,
+      "cache_read_input_token_cost_above_272k_tokens": null,
+      "max_input_tokens": 1050000,
+      "max_tokens": 128000,
+      "max_output_tokens": 128000
+    },
+    "gemini-3.6-flash": {
+      "_comment": "Deprecated pin at 2x the current upstream rate. sub2api's audited snapshot charges $1.50/$7.50 per MTok with a $2.70 priority tier; upstream litellm has since re-sourced gemini-3.6-flash from the Gemini API docs to the Gemini Enterprise Agent Platform docs and quoted exactly half ($0.75/$3.75). This override keeps the higher rate on purpose, so CUSTOMERS ARE CHARGED 2x Google's currently published figure. Drop this entry to adopt upstream pricing (sub2api's built-in TestDefaultPricingIncludesGemini36FlashRates only pins its local fallback snapshot and is unaffected either way).",
+      "input_cost_per_token": 1.5e-06,
+      "output_cost_per_token": 7.5e-06,
+      "cache_read_input_token_cost": 1.5e-07,
+      "input_cost_per_token_priority": 2.7e-06,
+      "output_cost_per_token_priority": 1.35e-05,
+      "cache_read_input_token_cost_priority": 2.7e-07
+    },
     "claude-sonnet-5": {
       "_comment": "Per platform.claude.com/docs/en/about-claude/pricing: 'The $2/$10 per million input/output token pricing for Claude Sonnet 5 ... is now the standard price. The previously scheduled increase to $3/$15 ... on September 1, 2026 will not occur.' This is the permanent standard price; do NOT remove this override on 2026-09-01.",
       "cache_creation_input_token_cost": 2.5e-06,

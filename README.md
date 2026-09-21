@@ -59,6 +59,51 @@ Aliases create copies of an existing model's pricing under a new key:
 
 If the source model doesn't exist in the filtered data, the alias is skipped with a warning.
 
+## Hand-maintained prices (`custom_models`)
+
+`custom_models` in `config.json` is the place to pin prices that must not follow
+upstream. Entries there are written **last**, so they win over both the existing
+output and the upstream file, and `update_existing: false` keeps a model that is
+already published from being repriced by an upstream sync. Two entries currently
+exist for that reason:
+
+- `codex-auto-review` — an internal Codex model. It is aliased from `gpt-5.6-luna`,
+  and this entry cancels the alias's inherited service-tier, cache-write and
+  long-context fields (a `null` value removes a field) so no public GPT-5.6 tier
+  pricing is inferred for it.
+- `gemini-3.6-flash` — pinned at 2× the currently published upstream rate. Upstream
+  re-sourced this model from the Gemini API docs to the Gemini Enterprise Agent
+  Platform docs, which quote exactly half. The pin is deliberate; delete the entry
+  to adopt upstream pricing.
+
+## Declarative billing expressions (`billing_expr`)
+
+sub2api supports an optional `billing_expr` field on any model entry: a single
+expression that replaces the per-token rates for that model and can encode
+time-of-day pricing (peak/off-peak windows), context-length tiers and cache/image
+rates. Put it in `custom_models` and the sync preserves it like any other field.
+
+Example — DeepSeek bills double rate on weekdays 09:00-12:00 and 14:00-18:00
+Beijing time, and half rate at all other times:
+
+```json
+{
+  "deepseek-flash": {
+    "billing_expr": "v1:(weekday(\"Asia/Shanghai\") >= 1 && weekday(\"Asia/Shanghai\") <= 5 && ((hour(\"Asia/Shanghai\") >= 9 && hour(\"Asia/Shanghai\") < 12) || (hour(\"Asia/Shanghai\") >= 14 && hour(\"Asia/Shanghai\") < 18))) ? tier(\"peak\", p * 0.30 + cr * 0.006 + c * 1.20) : tier(\"off_peak\", p * 0.15 + cr * 0.003 + c * 0.60)"
+  }
+}
+```
+
+Coefficients are real USD per million tokens; `p` is input, `c` is output, `cr`
+is cache read, `len` is the full input context length (use it, not `p`, for tier
+conditions). Group and channel pricing configured in sub2api still overrides the
+expression. Full grammar: `docs/MODEL_BILLING_EXPRESSIONS.md` in the sub2api
+repository.
+
+Note: sub2api ships a built-in DeepSeek expression, and its `deepseek-v4-pro` →
+Flash routing switch lives on the built-in side. Adding a `billing_expr` for
+`deepseek-v4-pro` here would disable that switch, so don't unless you mean to.
+
 ## Running locally
 
 ```bash
