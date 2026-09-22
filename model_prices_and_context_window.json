@@ -1091,14 +1091,18 @@
     "supports_xhigh_reasoning_effort": true
   },
   "deepseek-chat": {
-    "cache_read_input_token_cost": 2.8e-08,
-    "input_cost_per_token": 2.8e-07,
+    "_comment": "Retired legacy alias, kept billable at Flash rates so old callers are never priced from the upstream's own unverified numbers. Official card (api-docs.deepseek.com/zh-cn/quick_start/pricing) 2026-09-22: two live models, deepseek-flash (V4.1-Flash) and deepseek-v4-pro (V4-Pro-0813); peak = Beijing Mon-Fri 09:00-12:00 & 14:00-18:00, off-peak is exactly half. CNY card converted at the rate sub2api has always billed: flash 1/4/0.02 CNY per MTok -> 0.15/0.60/0.003 USD, pro 4.5/13.5/0.15 -> 0.66/1.98/0.022. The unit rates below are the OFF-PEAK baseline so the price page shows the same numbers the off_peak tier charges; the peak is carried by billing_expr, which is the only thing that prices a request. Keep billing_expr's trailing ' + cc * 0 + cc1h * 0' -- a cache-write variable the expression never mentions stays inside `p` and would be billed at the input rate.",
+    "billing_expr": "v1:weekday(\"Asia/Shanghai\") >= 1 && weekday(\"Asia/Shanghai\") <= 5 && ((hour(\"Asia/Shanghai\") >= 9 && hour(\"Asia/Shanghai\") < 12) || (hour(\"Asia/Shanghai\") >= 14 && hour(\"Asia/Shanghai\") < 18)) ? tier(\"peak\", p * 0.30 + cr * 0.006 + c * 1.20 + cc * 0 + cc1h * 0) : tier(\"off_peak\", p * 0.15 + cr * 0.003 + c * 0.60 + cc * 0 + cc1h * 0)",
+    "cache_creation_input_token_cost": 0,
+    "cache_creation_input_token_cost_above_1hr": 0,
+    "cache_read_input_token_cost": 3e-09,
+    "input_cost_per_token": 1.5e-07,
     "litellm_provider": "deepseek",
     "max_input_tokens": 131072,
     "max_output_tokens": 8192,
     "max_tokens": 8192,
     "mode": "chat",
-    "output_cost_per_token": 4.2e-07,
+    "output_cost_per_token": 6e-07,
     "source": "https://api-docs.deepseek.com/quick_start/pricing",
     "supported_endpoints": [
       "/v1/chat/completions"
@@ -1112,9 +1116,12 @@
     "supports_tool_choice": true
   },
   "deepseek-flash": {
-    "cache_creation_input_token_cost": 0.0,
-    "cache_read_input_token_cost": 6e-09,
-    "input_cost_per_token": 3e-07,
+    "_comment": "DeepSeek-V4.1-Flash, the current model name. Official card (api-docs.deepseek.com/zh-cn/quick_start/pricing) 2026-09-22: two live models, deepseek-flash (V4.1-Flash) and deepseek-v4-pro (V4-Pro-0813); peak = Beijing Mon-Fri 09:00-12:00 & 14:00-18:00, off-peak is exactly half. CNY card converted at the rate sub2api has always billed: flash 1/4/0.02 CNY per MTok -> 0.15/0.60/0.003 USD, pro 4.5/13.5/0.15 -> 0.66/1.98/0.022. The unit rates below are the OFF-PEAK baseline so the price page shows the same numbers the off_peak tier charges; the peak is carried by billing_expr, which is the only thing that prices a request. Keep billing_expr's trailing ' + cc * 0 + cc1h * 0' -- a cache-write variable the expression never mentions stays inside `p` and would be billed at the input rate.",
+    "billing_expr": "v1:weekday(\"Asia/Shanghai\") >= 1 && weekday(\"Asia/Shanghai\") <= 5 && ((hour(\"Asia/Shanghai\") >= 9 && hour(\"Asia/Shanghai\") < 12) || (hour(\"Asia/Shanghai\") >= 14 && hour(\"Asia/Shanghai\") < 18)) ? tier(\"peak\", p * 0.30 + cr * 0.006 + c * 1.20 + cc * 0 + cc1h * 0) : tier(\"off_peak\", p * 0.15 + cr * 0.003 + c * 0.60 + cc * 0 + cc1h * 0)",
+    "cache_creation_input_token_cost": 0,
+    "cache_creation_input_token_cost_above_1hr": 0,
+    "cache_read_input_token_cost": 3e-09,
+    "input_cost_per_token": 1.5e-07,
     "input_cost_per_token_cache_hit": 6e-09,
     "litellm_provider": "deepseek",
     "max_input_tokens": 1000000,
@@ -1149,7 +1156,7 @@
         }
       ]
     },
-    "output_cost_per_token": 1.2e-06,
+    "output_cost_per_token": 6e-07,
     "source": "https://api-docs.deepseek.com/quick_start/pricing",
     "supported_endpoints": [
       "/v1/chat/completions"
@@ -1166,14 +1173,18 @@
     "supports_vision": true
   },
   "deepseek-reasoner": {
-    "cache_read_input_token_cost": 2.8e-08,
-    "input_cost_per_token": 2.8e-07,
+    "_comment": "Retired legacy alias, kept billable at Flash rates (see deepseek-chat). Official card (api-docs.deepseek.com/zh-cn/quick_start/pricing) 2026-09-22: two live models, deepseek-flash (V4.1-Flash) and deepseek-v4-pro (V4-Pro-0813); peak = Beijing Mon-Fri 09:00-12:00 & 14:00-18:00, off-peak is exactly half. CNY card converted at the rate sub2api has always billed: flash 1/4/0.02 CNY per MTok -> 0.15/0.60/0.003 USD, pro 4.5/13.5/0.15 -> 0.66/1.98/0.022. The unit rates below are the OFF-PEAK baseline so the price page shows the same numbers the off_peak tier charges; the peak is carried by billing_expr, which is the only thing that prices a request. Keep billing_expr's trailing ' + cc * 0 + cc1h * 0' -- a cache-write variable the expression never mentions stays inside `p` and would be billed at the input rate.",
+    "billing_expr": "v1:weekday(\"Asia/Shanghai\") >= 1 && weekday(\"Asia/Shanghai\") <= 5 && ((hour(\"Asia/Shanghai\") >= 9 && hour(\"Asia/Shanghai\") < 12) || (hour(\"Asia/Shanghai\") >= 14 && hour(\"Asia/Shanghai\") < 18)) ? tier(\"peak\", p * 0.30 + cr * 0.006 + c * 1.20 + cc * 0 + cc1h * 0) : tier(\"off_peak\", p * 0.15 + cr * 0.003 + c * 0.60 + cc * 0 + cc1h * 0)",
+    "cache_creation_input_token_cost": 0,
+    "cache_creation_input_token_cost_above_1hr": 0,
+    "cache_read_input_token_cost": 3e-09,
+    "input_cost_per_token": 1.5e-07,
     "litellm_provider": "deepseek",
     "max_input_tokens": 131072,
     "max_output_tokens": 65536,
     "max_tokens": 65536,
     "mode": "chat",
-    "output_cost_per_token": 4.2e-07,
+    "output_cost_per_token": 6e-07,
     "source": "https://api-docs.deepseek.com/quick_start/pricing",
     "supported_endpoints": [
       "/v1/chat/completions"
@@ -1202,9 +1213,12 @@
     "supports_tool_choice": true
   },
   "deepseek-v4-flash": {
-    "cache_creation_input_token_cost": 0.0,
-    "cache_read_input_token_cost": 1.4e-08,
-    "input_cost_per_token": 4.4e-07,
+    "_comment": "Retired flash alias: the model is offline and requests are served by DeepSeek-V4.1-Flash at Flash rates (official footnote 1). Official card (api-docs.deepseek.com/zh-cn/quick_start/pricing) 2026-09-22: two live models, deepseek-flash (V4.1-Flash) and deepseek-v4-pro (V4-Pro-0813); peak = Beijing Mon-Fri 09:00-12:00 & 14:00-18:00, off-peak is exactly half. CNY card converted at the rate sub2api has always billed: flash 1/4/0.02 CNY per MTok -> 0.15/0.60/0.003 USD, pro 4.5/13.5/0.15 -> 0.66/1.98/0.022. The unit rates below are the OFF-PEAK baseline so the price page shows the same numbers the off_peak tier charges; the peak is carried by billing_expr, which is the only thing that prices a request. Keep billing_expr's trailing ' + cc * 0 + cc1h * 0' -- a cache-write variable the expression never mentions stays inside `p` and would be billed at the input rate.",
+    "billing_expr": "v1:weekday(\"Asia/Shanghai\") >= 1 && weekday(\"Asia/Shanghai\") <= 5 && ((hour(\"Asia/Shanghai\") >= 9 && hour(\"Asia/Shanghai\") < 12) || (hour(\"Asia/Shanghai\") >= 14 && hour(\"Asia/Shanghai\") < 18)) ? tier(\"peak\", p * 0.30 + cr * 0.006 + c * 1.20 + cc * 0 + cc1h * 0) : tier(\"off_peak\", p * 0.15 + cr * 0.003 + c * 0.60 + cc * 0 + cc1h * 0)",
+    "cache_creation_input_token_cost": 0,
+    "cache_creation_input_token_cost_above_1hr": 0,
+    "cache_read_input_token_cost": 3e-09,
+    "input_cost_per_token": 1.5e-07,
     "input_cost_per_token_cache_hit": 1.4e-08,
     "litellm_provider": "deepseek",
     "max_input_tokens": 1000000,
@@ -1239,7 +1253,7 @@
         }
       ]
     },
-    "output_cost_per_token": 1.32e-06,
+    "output_cost_per_token": 6e-07,
     "source": "https://api-docs.deepseek.com/quick_start/pricing",
     "supported_endpoints": [
       "/v1/chat/completions"
@@ -1256,9 +1270,12 @@
     "supports_vision": false
   },
   "deepseek-v4-flash-vision-exp": {
-    "cache_creation_input_token_cost": 0.0,
-    "cache_read_input_token_cost": 1.4e-08,
-    "input_cost_per_token": 4.4e-07,
+    "_comment": "Retired flash vision alias: same as deepseek-v4-flash, served by V4.1-Flash at Flash rates (official footnote 1). Official card (api-docs.deepseek.com/zh-cn/quick_start/pricing) 2026-09-22: two live models, deepseek-flash (V4.1-Flash) and deepseek-v4-pro (V4-Pro-0813); peak = Beijing Mon-Fri 09:00-12:00 & 14:00-18:00, off-peak is exactly half. CNY card converted at the rate sub2api has always billed: flash 1/4/0.02 CNY per MTok -> 0.15/0.60/0.003 USD, pro 4.5/13.5/0.15 -> 0.66/1.98/0.022. The unit rates below are the OFF-PEAK baseline so the price page shows the same numbers the off_peak tier charges; the peak is carried by billing_expr, which is the only thing that prices a request. Keep billing_expr's trailing ' + cc * 0 + cc1h * 0' -- a cache-write variable the expression never mentions stays inside `p` and would be billed at the input rate.",
+    "billing_expr": "v1:weekday(\"Asia/Shanghai\") >= 1 && weekday(\"Asia/Shanghai\") <= 5 && ((hour(\"Asia/Shanghai\") >= 9 && hour(\"Asia/Shanghai\") < 12) || (hour(\"Asia/Shanghai\") >= 14 && hour(\"Asia/Shanghai\") < 18)) ? tier(\"peak\", p * 0.30 + cr * 0.006 + c * 1.20 + cc * 0 + cc1h * 0) : tier(\"off_peak\", p * 0.15 + cr * 0.003 + c * 0.60 + cc * 0 + cc1h * 0)",
+    "cache_creation_input_token_cost": 0,
+    "cache_creation_input_token_cost_above_1hr": 0,
+    "cache_read_input_token_cost": 3e-09,
+    "input_cost_per_token": 1.5e-07,
     "input_cost_per_token_cache_hit": 1.4e-08,
     "litellm_provider": "deepseek",
     "max_input_tokens": 1000000,
@@ -1293,7 +1310,7 @@
         }
       ]
     },
-    "output_cost_per_token": 1.32e-06,
+    "output_cost_per_token": 6e-07,
     "source": "https://api-docs.deepseek.com/quick_start/pricing",
     "supported_endpoints": [
       "/v1/chat/completions"
@@ -1310,9 +1327,12 @@
     "supports_vision": true
   },
   "deepseek-v4-pro": {
-    "cache_creation_input_token_cost": 0.0,
-    "cache_read_input_token_cost": 4.4e-08,
-    "input_cost_per_token": 1.32e-06,
+    "_comment": "DeepSeek-V4-Pro-0813. Pro is BACK on its own card: upstream no longer routes it to V4.1-Flash, so these Pro peak/off-peak rates are what actually charges. Official card (api-docs.deepseek.com/zh-cn/quick_start/pricing) 2026-09-22: two live models, deepseek-flash (V4.1-Flash) and deepseek-v4-pro (V4-Pro-0813); peak = Beijing Mon-Fri 09:00-12:00 & 14:00-18:00, off-peak is exactly half. CNY card converted at the rate sub2api has always billed: flash 1/4/0.02 CNY per MTok -> 0.15/0.60/0.003 USD, pro 4.5/13.5/0.15 -> 0.66/1.98/0.022. The unit rates below are the OFF-PEAK baseline so the price page shows the same numbers the off_peak tier charges; the peak is carried by billing_expr, which is the only thing that prices a request. Keep billing_expr's trailing ' + cc * 0 + cc1h * 0' -- a cache-write variable the expression never mentions stays inside `p` and would be billed at the input rate.",
+    "billing_expr": "v1:weekday(\"Asia/Shanghai\") >= 1 && weekday(\"Asia/Shanghai\") <= 5 && ((hour(\"Asia/Shanghai\") >= 9 && hour(\"Asia/Shanghai\") < 12) || (hour(\"Asia/Shanghai\") >= 14 && hour(\"Asia/Shanghai\") < 18)) ? tier(\"peak\", p * 1.32 + cr * 0.044 + c * 3.96 + cc * 0 + cc1h * 0) : tier(\"off_peak\", p * 0.66 + cr * 0.022 + c * 1.98 + cc * 0 + cc1h * 0)",
+    "cache_creation_input_token_cost": 0,
+    "cache_creation_input_token_cost_above_1hr": 0,
+    "cache_read_input_token_cost": 2.2e-08,
+    "input_cost_per_token": 6.6e-07,
     "input_cost_per_token_cache_hit": 4.4e-08,
     "litellm_provider": "deepseek",
     "max_input_tokens": 1000000,
@@ -1347,7 +1367,7 @@
         }
       ]
     },
-    "output_cost_per_token": 3.96e-06,
+    "output_cost_per_token": 1.98e-06,
     "source": "https://api-docs.deepseek.com/quick_start/pricing",
     "supported_endpoints": [
       "/v1/chat/completions"

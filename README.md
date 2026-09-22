@@ -64,8 +64,8 @@ If the source model doesn't exist in the filtered data, the alias is skipped wit
 `custom_models` in `config.json` is the place to pin prices that must not follow
 upstream. Entries there are written **last**, so they win over both the existing
 output and the upstream file, and `update_existing: false` keeps a model that is
-already published from being repriced by an upstream sync. Two entries currently
-exist for that reason:
+already published from being repriced by an upstream sync. Entries currently exist
+for these reasons:
 
 - `codex-auto-review` — an internal Codex model. It is aliased from `gpt-5.6-luna`,
   and this entry cancels the alias's inherited service-tier, cache-write and
@@ -75,6 +75,10 @@ exist for that reason:
   re-sourced this model from the Gemini API docs to the Gemini Enterprise Agent
   Platform docs, which quote exactly half. The pin is deliberate; delete the entry
   to adopt upstream pricing.
+- `deepseek-flash` / `deepseek-v4-flash` / `deepseek-v4-flash-vision-exp` /
+  `deepseek-v4-pro` / `deepseek-chat` / `deepseek-reasoner` — DeepSeek's rates and
+  its peak/off-peak rule are defined here as `billing_expr` (see below), so the
+  published card and the charged amount can no longer drift apart.
 
 ## Declarative billing expressions (`billing_expr`)
 
@@ -100,9 +104,44 @@ conditions). Group and channel pricing configured in sub2api still overrides the
 expression. Full grammar: `docs/MODEL_BILLING_EXPRESSIONS.md` in the sub2api
 repository.
 
-Note: sub2api ships a built-in DeepSeek expression, and its `deepseek-v4-pro` →
-Flash routing switch lives on the built-in side. Adding a `billing_expr` for
-`deepseek-v4-pro` here would disable that switch, so don't unless you mean to.
+An expression the entry does **not** mention is not silently free: a variable the
+expression never references stays inside `p` and is billed at the input rate. That
+is why DeepSeek's expressions carry a trailing ` + cc * 0 + cc1h * 0` — DeepSeek
+charges nothing for a cache write, so the term has to be written out to keep those
+tokens out of `p`.
+
+### DeepSeek
+
+Official card (<https://api-docs.deepseek.com/zh-cn/quick_start/pricing>): the live
+models are `deepseek-flash` (V4.1-Flash) and `deepseek-v4-pro` (V4-Pro-0813); peak
+is Beijing Mon-Fri 09:00-12:00 & 14:00-18:00 (excluding Chinese public holidays),
+everything else — including weekends and holidays — is off-peak, and off-peak is
+exactly half.
+
+`config.json` defines both cards here, in USD per MTok at the rate sub2api has
+always billed (flash 1/4/0.02 CNY per MTok → $0.15/$0.60/$0.003; pro
+4.5/13.5/0.15 CNY → $0.66/$1.98/$0.022):
+
+- `deepseek-flash` — peak `p*0.30 + cr*0.006 + c*1.20`, off-peak
+  `p*0.15 + cr*0.003 + c*0.60`
+- `deepseek-v4-pro` — peak `p*1.32 + cr*0.044 + c*3.96`, off-peak
+  `p*0.66 + cr*0.022 + c*1.98`
+- the retired aliases `deepseek-v4-flash`, `deepseek-v4-flash-vision-exp` (model
+  offline, requests served by V4.1-Flash) and `deepseek-chat`, `deepseek-reasoner`
+  bill at Flash rates, per footnote 1 of the official card
+
+The per-token rate fields on these entries are the **off-peak baseline** and are
+used for display only; the expression is what charges a request. `deepseek-v4-pro`
+was routed to V4.1-Flash by upstream between 2026-09-14 and the card's restoration
+— the hardcoded switch for that in sub2api is gone, so the Pro card above is what
+now applies.
+
+`deepseek-v3-2-251201` (provider `volcengine`) deliberately has **no** expression
+here and its upstream rates are 0. sub2api treats any `deepseek-` prefix as
+DeepSeek's own card, so to bill it from Volcengine's numbers you must first fill in
+real rates and then add `"billing_expr": ""` (an empty string means "bill from this
+entry's own rates, do not let the built-in rule take over") — declaring the empty
+string without rates would make the model free.
 
 ## Running locally
 
