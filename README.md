@@ -79,6 +79,31 @@ for these reasons:
   `deepseek-v4-pro` / `deepseek-chat` / `deepseek-reasoner` — DeepSeek's rates and
   its peak/off-peak rule are defined here as `billing_expr` (see below), so the
   published card and the charged amount can no longer drift apart.
+- `glm-5` / `glm-5-turbo` / `glm-5.1` / `glm-5.2` / `glm-5.3` / `kimi-k2.5` /
+  `kimi-k2.6` / `kimi-k2.7-code` / `kimi-k3` / `minimax-m2.7` — these models are not
+  covered by `prefix_filters` (litellm has no GLM/Kimi/MiniMax entry for them), so a
+  hand-maintained entry is the only way they get a published price.
+  `glm-5`, `glm-5-turbo`, `glm-5.2`, `glm-5.3`, `kimi-k2.7-code` and `kimi-k3` came
+  from upstream `Wei-Shaw/model-price-repo` (PR #17, official reference prices); the
+  rest were added here earlier.
+
+## Merging upstream (`Wei-Shaw/model-price-repo`)
+
+This repository is a fork of upstream `Wei-Shaw/model-price-repo` (common ancestor
+`10706f3`), so upstream syncs and hand-written reference prices can be pulled in with
+a normal `git merge upstream/main`. Resolve it like this:
+
+1. `config.json` merges cleanly — keep every local `custom_models` / `aliases` entry,
+   because that is where the audited pins live.
+2. For the generated catalog take **upstream's** snapshot (it is the fresher one:
+   newer `*_batches` fields and newly published models), then re-run
+   `scripts/sync_prices.py` on it with the merged config
+   (`python3 scripts/sync_prices.py --config config.json --repo-root .` in a scratch
+   copy first). Because `custom_models` is written last and
+   `update_existing: false` never reprices a published model, the result only **adds**
+   fields/models — no published rate moves. Verify that before committing: the model
+   count must not shrink, `deepseek-*` must still carry `billing_expr`, and
+   `gemini-3.6-flash` must still be 2× upstream.
 
 ## Declarative billing expressions (`billing_expr`)
 
