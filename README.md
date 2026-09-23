@@ -80,11 +80,14 @@ for these reasons:
   its peak/off-peak rule are defined here as `billing_expr` (see below), so the
   published card and the charged amount can no longer drift apart.
 - `glm-5` / `glm-5-turbo` / `glm-5.1` / `glm-5.2` / `glm-5.3` / `kimi-k2.5` /
-  `kimi-k2.6` / `kimi-k2.7-code` / `kimi-k3` / `minimax-m2.7` — these models are not
-  covered by `prefix_filters` (litellm has no GLM/Kimi/MiniMax entry for them), so a
-  hand-maintained entry is the only way they get a published price.
-  `glm-5`, `glm-5-turbo`, `glm-5.2`, `glm-5.3`, `kimi-k2.7-code` and `kimi-k3` came
-  from upstream `Wei-Shaw/model-price-repo` (PR #17, official reference prices); the
+  `kimi-k2.6` / `kimi-k2.7-code` / `kimi-k3` / `minimax-m2.7` / `grok-4.3` /
+  `grok-4.5` / `grok-4.6` / `grok-4.7` / `grok-4.20-*` / `grok-build-0.1` — these
+  models are not covered by `prefix_filters` (litellm has no GLM/Kimi/MiniMax/bare-grok
+  entry for them), so a hand-maintained entry is the only way they get a published
+  price. `glm-5`, `glm-5-turbo`, `glm-5.2`, `glm-5.3`, `kimi-k2.7-code` and `kimi-k3`
+  came from upstream `Wei-Shaw/model-price-repo` (PR #17, official reference prices);
+  `grok-4.7` was added to match sub2api v0.2.8's own audited card (identical to
+  `grok-4.6`: <200k $2.00 / $0.50 cached / $6.00, >=200k $4.00 / $1.00 / $12.00); the
   rest were added here earlier.
 
 ## Merging upstream (`Wei-Shaw/model-price-repo`)

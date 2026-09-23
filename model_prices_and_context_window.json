@@ -8505,6 +8505,28 @@
     "supports_vision": true,
     "supports_web_search": true
   },
+  "grok-4.7": {
+    "_comment": "Card is identical to grok-4.6 and to sub2api v0.2.8's own audited card for this model (backend/internal/service/billing_service.go fallbackPrices[\"grok-4.7\"] and its bundled resources/model-pricing catalog): <200k prompt $2.00 input / $0.50 cached / $6.00 output; >=200k prompt $4.00 / $1.00 / $12.00, charged for the whole request once the threshold is reached (hence the three *_above_200k_tokens fields). LiteLLM has no bare grok-* key \u2014 'grok-' is not in prefix_filters \u2014 so nothing here can be absorbed or repriced automatically; this entry is the only place this model's price is published.",
+    "cache_read_input_token_cost": 5e-07,
+    "cache_read_input_token_cost_above_200k_tokens": 1e-06,
+    "input_cost_per_token": 2e-06,
+    "input_cost_per_token_above_200k_tokens": 4e-06,
+    "litellm_provider": "xai",
+    "max_input_tokens": 500000,
+    "max_output_tokens": 500000,
+    "max_tokens": 500000,
+    "mode": "chat",
+    "output_cost_per_token": 6e-06,
+    "output_cost_per_token_above_200k_tokens": 1.2e-05,
+    "source": "https://docs.x.ai/developers/models/grok-4.7",
+    "supports_function_calling": true,
+    "supports_prompt_caching": true,
+    "supports_reasoning": true,
+    "supports_response_schema": true,
+    "supports_tool_choice": true,
+    "supports_vision": true,
+    "supports_web_search": true
+  },
   "grok-build-0.1": {
     "cache_read_input_token_cost": 2e-07,
     "cache_read_input_token_cost_above_200k_tokens": 4e-07,
